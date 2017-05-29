@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="google" content="notranslate" />
+<title>Biu</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <section class="content">
+            <a href="" class="logo"><img src="https://v2ex.assets.uxengine.net/avatar/021d/1d01/81626_large.png?m=1489767501" alt=""></a>
+            <nav>
+                <a href="" class="active">填坑向</a>
+                <a href="">应用墙</a>
+                <a href="">关于</a>
+            </nav>
+        </section>
+    </header>
+    <section class="content">
+        <section class="article">
+            <p class="mate">May 29, 2017, <a href="">文学</a> <a href="">技术</a></p>
+            <h2 class="title">Nougat(Misuzu) 的进展和改变</h2>
+            <section class="post yue">
+            <p>Misuzu 这个名字被人吐槽了很久，不知道怎么读，也不知道什么意思。所以就改成了 <strong>Nougat</strong> 这个名字，意为牛轧糖。</p>
+<h2>handler 参数</h2>
+<p>handler 的参数从原来的 <code>request</code> 改成了 <code>ctx</code> 。相比于前者， <code>ctx</code> 增加了 <code>request</code> 和 <code>app</code> 的支持。</p>
+<p>因为 Nougat 这个框架不像 Flask 那样使用子线程的方式来处理。 所以 Flask 中的 <code>url_for</code> 和 <code>abort</code> 不能裸露使用。因此必须依赖上下文（Flask 可以在线程池中依靠线程ID 寻找上下文）。所以一定要这样使用<code>something.url_for()</code> 和 <code>something.abourt</code> 。</p>
+<p><code>url_for</code> <code>abort</code> <code>redirect</code> 这些操作放在 <code>request</code> 中感觉不三不四的。因此采用了<code>ctx</code>的写法。</p>
+<p>所以handler 的写法就变成了一下的样子：</p>
+<pre><code class="language-python">async def handler(ctx):
+    pass
+</code></pre>
+<h2>Middleware</h2>
+<p>原来那种以类的形式来写 middleware，过于累赘，而且不支持异步操作。因此改为 koa-like 的方式来写。</p>
+<pre><code class="language-python">async def middleware(ctx, next):
+    # doing before handler
+    await next()  # doing handler
+    #doing after handler
+</code></pre>
+<p>还有一些小小的改进</p>
+<ul>
+<li>使用 <code>yarl.URL</code> 来格式化 URL， 比我自己写更加高效，更加可信</li>
+<li><code>register_middleware</code> 和 <code>register_section</code>  改用 <code>use</code> 。更加简约</li>
+<li>完善了文档</li>
+<li>使用了激进的<code>TOML</code> 来做项目配置文件，并且同伴完成了<code>Config</code> 模块的编写，不过还需要我重构一次</li>
+</ul>
+<p>不过还是需要有一些等待修改的地方(都是我现在能想到的)：</p>
+<ul>
+<li>对于现在 <code>ctx.params</code>的读取方式不太满意，应该重构以下</li>
+<li>返回内容的格式化还没写</li>
+<li><code>param_group</code> 或者叫 <code>params</code> 方法，一次性读入多个通用参数</li>
+<li>文档自动化的集成</li>
+</ul>
+<p>并且，从现在开始 Nougat 从原来的<code>pre-alpha</code> 进入了<code>alpha</code> 状态，意味着可以尝试投入工程中使用了。</p>
+<p>我也会写一个工程去尝试以下 Nougat 的可用性。</p>
+        </section>
+        </section>
+        
+        
+
+
+    </section>
+
+</body>
+</html>
+
+
